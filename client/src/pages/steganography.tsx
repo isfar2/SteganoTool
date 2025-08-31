@@ -206,9 +206,13 @@ export default function SteganographyPage() {
               <h1 className="font-sans font-bold text-xl text-foreground">SteganoTool</h1>
             </div>
             <nav className="hidden md:flex items-center space-x-6">
-              <span className="text-muted-foreground text-sm font-medium">How it Works</span>
-              <span className="text-muted-foreground text-sm font-medium">Security</span>
-              <span className="text-muted-foreground text-sm font-medium">Help</span>
+              <button 
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-muted-foreground text-sm font-medium hover:text-foreground transition-colors"
+                data-testid="nav-how-it-works"
+              >
+                How it Works
+              </button>
             </nav>
           </div>
         </div>
@@ -486,7 +490,7 @@ export default function SteganographyPage() {
       </main>
       
       {/* Info Section */}
-      <section className="bg-muted py-12 sm:py-16">
+      <section id="how-it-works" className="bg-muted py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h3 className="font-sans font-bold text-2xl sm:text-3xl text-foreground mb-4">How Steganography Works</h3>

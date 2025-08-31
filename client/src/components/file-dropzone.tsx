@@ -92,7 +92,7 @@ export function FileDropzone({
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = accept;
-            input.onchange = handleFileInput;
+            input.onchange = handleFileInput as any;
             input.click();
           }}
         >
