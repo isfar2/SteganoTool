@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteganoTool - Hide Messages in Images</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: hsl(0, 0%, 100%);
+            --foreground: hsl(0, 0%, 0%);
+            --card: hsl(0, 0%, 96.47%);
+            --card-foreground: hsl(0, 0%, 0%);
+            --primary: hsl(96, 85.19%, 73.53%);
+            --primary-foreground: hsl(0, 0%, 0%);
+            --secondary: hsl(0, 0%, 0%);
+            --secondary-foreground: hsl(0, 0%, 100%);
+            --muted: hsl(0, 0%, 96.08%);
+            --muted-foreground: #5A5A5A;
+            --border: hsl(0, 0%, 96.47%);
+            --destructive: hsl(2.04, 74.62%, 61.37%);
+            --destructive-foreground: hsl(0, 0%, 100%);
+            --font-sans: 'Space Grotesk', sans-serif;
+            --font-serif: 'Geist', sans-serif;
+            --font-mono: 'Geist Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            background-color: var(--background);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2rem;
+            height: 2rem;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .nav-button {
+            color: var(--muted-foreground);
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-button:hover {
+            color: var(--foreground);
+        }
+
+        .hero {
+            padding: 3rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            color: var(--muted-foreground);
+            max-width: 48rem;
+            margin: 0 auto 2rem;
+        }
+
+        .main-content {
+            padding: 2rem 0 3rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        .badge-encode {
+            background-color: rgba(189, 222, 148, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-decode {
+            background-color: rgba(207, 191, 255, 0.5);
+            color: var(--foreground);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .dropzone {
+            border: 2px dashed var(--border);
+            background-color: rgba(245, 245, 245, 0.5);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropzone:hover {
+            background-color: rgba(245, 245, 245, 0.8);
+        }
+
+        .dropzone.drag-over {
+            border-color: var(--primary);
+            background-color: rgba(189, 222, 148, 0.05);
+        }
+
+        .dropzone-icon {
+            width: 3rem;
+            height: 3rem;
+            background-color: rgba(189, 222, 148, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+        }
+
+        .file-preview {
+            background-color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .file-thumbnail {
+            width: 3rem;
+            height: 3rem;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            background-color: var(--background);
+            resize: none;
+            min-height: 100px;
+        }
+
+        .input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            background-color: var(--background);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .checkbox {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .button-primary {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .button-secondary {
+            background-color: var(--secondary);
+            color: var(--secondary-foreground);
+        }
+
+        .button-ghost {
+            background: none;
+            color: var(--destructive);
+            padding: 0.5rem;
+        }
+
+        .progress-container {
+            margin-top: 1rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--muted-foreground);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 0.5rem;
+            background-color: var(--muted);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            transition: width 0.3s ease-in-out;
+        }
+
+        .result-box {
+            background-color: rgba(189, 222, 148, 0.1);
+            border: 1px solid rgba(189, 222, 148, 0.2);
+            padding: 1rem;
+            margin-top: 1rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .result-box.error {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .message-display {
+            min-height: 120px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            background-color: rgba(245, 245, 245, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .message-placeholder {
+            text-align: center;
+            color: var(--muted-foreground);
+            padding: 2rem 0;
+        }
+
+        .message-content {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .info-section {
+            background-color: var(--muted);
+            padding: 3rem 0 4rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-icon {
+            width: 4rem;
+            height: 4rem;
+            background-color: rgba(189, 222, 148, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .tech-section {
+            padding: 3rem 0;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .tech-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .char-count {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--muted-foreground);
+        }
+
+        .copy-button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .copy-button:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header-content nav {
+                display: none;
+            }
+            .hero h2 {
+                font-size: 2rem;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <span style="color: var(--primary-foreground); font-family: var(--font-mono); font-weight: bold; font-size: 1.125rem;">S</span>
+                    </div>
+                    <h1 class="logo-text">SteganoTool</h1>
+                </div>
+                <nav>
+                    <button onclick="scrollToHowItWorks()" class="nav-button" data-testid="nav-how-it-works">
+                        How it Works
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Hide Messages in Images</h2>
+            <p>
+                Secure steganography tool for embedding secret text messages within images using LSB (Least Significant Bit) encryption. 
+                Upload, encode, decode - all processed locally in your browser for maximum privacy.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Tool -->
+    <main class="main-content">
+        <div class="container">
+            <div class="grid">
+                
+                <!-- Encode Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Encode Message</h3>
+                        <span class="badge badge-encode">HIDE</span>
+                    </div>
+                    
+                    <!-- Image Upload -->
+                    <div class="form-group">
+                        <label class="label">Cover Image</label>
+                        <div id="encode-dropzone" class="dropzone" onclick="selectEncodeFile()" data-testid="encode-dropzone">
+                            <div class="dropzone-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                </svg>
+                            </div>
+                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Drop image here or click to browse</p>
+                            <p style="color: var(--muted-foreground); font-size: 0.875rem;">PNG, JPEG up to 10MB</p>
+                        </div>
+                        <div id="encode-file-preview" class="file-preview hidden">
+                            <div class="file-info">
+                                <img id="encode-thumbnail" class="file-thumbnail" alt="Preview">
+                                <div>
+                                    <p id="encode-filename" style="font-size: 0.875rem; font-weight: 500;"></p>
+                                    <p id="encode-filesize" style="font-size: 0.75rem; color: var(--muted-foreground);"></p>
+                                </div>
+                            </div>
+                            <button onclick="removeEncodeFile()" class="button-ghost" data-testid="button-remove-encode-file">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m18 6-12 12"/>
+                                    <path d="m6 6 12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Message Input -->
+                    <div class="form-group">
+                        <label for="secret-message" class="label">Secret Message</label>
+                        <textarea 
+                            id="secret-message" 
+                            class="textarea" 
+                            rows="4" 
+                            placeholder="Enter your secret message here..."
+                            oninput="updateCharCount()"
+                            data-testid="input-secret-message"
+                        ></textarea>
+                        <div class="char-count">
+                            <span id="char-count">0 characters</span>
+                            <span id="capacity-count">Capacity: Select image</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Protection -->
+                    <div class="form-group">
+                        <label class="label">Encoding Options</label>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="password-protect" class="checkbox" onchange="togglePasswordField()" data-testid="checkbox-password-protect">
+                            <label for="password-protect" style="font-size: 0.875rem;">Password Protection</label>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="encode-password" 
+                            class="input hidden" 
+                            placeholder="Enter password"
+                            style="margin-left: 1.5rem;"
+                            data-testid="input-encode-password"
+                        >
+                    </div>
+                    
+                    <!-- Encode Button & Progress -->
+                    <div>
+                        <button onclick="encodeMessage()" id="encode-button" class="button button-primary" data-testid="button-encode">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect width="12" height="16" x="2" y="4" rx="2"/>
+                                <path d="m22 7-5-5"/>
+                                <path d="M14 3h5v5"/>
+                            </svg>
+                            Encode Message
+                        </button>
+                        
+                        <div id="encode-progress" class="progress-container hidden" data-testid="encode-progress">
+                            <div class="progress-header">
+                                <span>Encoding...</span>
+                                <span id="encode-progress-text">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="encode-progress-fill" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="encode-result" class="result-box hidden" data-testid="encode-result">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="color: var(--primary); font-weight: 500;">Message Encoded Successfully!</p>
+                                    <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">Your steganographic image is ready for download</p>
+                                </div>
+                                <button onclick="downloadImage()" class="button button-primary" style="width: auto; padding: 0.5rem 1rem;" data-testid="button-download">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7,10 12,15 17,10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Decode Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Decode Message</h3>
+                        <span class="badge badge-decode">EXTRACT</span>
+                    </div>
+                    
+                    <!-- Image Upload -->
+                    <div class="form-group">
+                        <label class="label">Steganographic Image</label>
+                        <div id="decode-dropzone" class="dropzone" onclick="selectDecodeFile()" data-testid="decode-dropzone">
+                            <div class="dropzone-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" stroke-width="2">
+                                    <rect width="12" height="16" x="2" y="4" rx="2"/>
+                                    <path d="m22 7-5-5"/>
+                                    <path d="M14 3h5v5"/>
+                                </svg>
+                            </div>
+                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Drop steganographic image here</p>
+                            <p style="color: var(--muted-foreground); font-size: 0.875rem;">PNG, JPEG with hidden messages</p>
+                        </div>
+                        <div id="decode-file-preview" class="file-preview hidden">
+                            <div class="file-info">
+                                <img id="decode-thumbnail" class="file-thumbnail" alt="Preview">
+                                <div>
+                                    <p id="decode-filename" style="font-size: 0.875rem; font-weight: 500;"></p>
+                                    <p id="decode-filesize" style="font-size: 0.75rem; color: var(--muted-foreground);"></p>
+                                </div>
+                            </div>
+                            <button onclick="removeDecodeFile()" class="button-ghost" data-testid="button-remove-decode-file">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m18 6-12 12"/>
+                                    <path d="m6 6 12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Input -->
+                    <div class="form-group">
+                        <label for="decode-password" class="label">Password (if protected)</label>
+                        <input 
+                            type="password" 
+                            id="decode-password" 
+                            class="input" 
+                            placeholder="Enter password if message is protected"
+                            data-testid="input-decode-password"
+                        >
+                    </div>
+                    
+                    <!-- Decode Button & Progress -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <button onclick="decodeMessage()" id="decode-button" class="button button-secondary" data-testid="button-decode">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect width="12" height="16" x="2" y="4" rx="2"/>
+                                <path d="m22 7-5-5"/>
+                                <path d="M14 3h5v5"/>
+                            </svg>
+                            Extract Message
+                        </button>
+                        
+                        <div id="decode-progress" class="progress-container hidden" data-testid="decode-progress">
+                            <div class="progress-header">
+                                <span>Extracting...</span>
+                                <span id="decode-progress-text">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="decode-progress-fill" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decoded Message Display -->
+                    <div class="form-group">
+                        <label class="label">Extracted Message</label>
+                        <div class="message-display">
+                            <div id="message-placeholder" class="message-placeholder" data-testid="decoded-message-placeholder">
+                                <div style="width: 2rem; height: 2rem; background-color: var(--muted); margin: 0 auto 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                </div>
+                                <p style="font-size: 0.875rem;">Decoded message will appear here</p>
+                            </div>
+                            <div id="message-content" class="hidden" data-testid="decoded-message-content">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--muted-foreground);">EXTRACTED MESSAGE</span>
+                                    <button onclick="copyMessage()" class="copy-button" data-testid="button-copy-message">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                                            <path d="m4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                                        </svg>
+                                        Copy
+                                    </button>
+                                </div>
+                                <p id="decoded-text" class="message-content" data-testid="text-decoded-message"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Decode Result -->
+                    <div id="decode-result" class="hidden" data-testid="decode-result"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="info-section">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 2rem; margin-bottom: 1rem;">How Steganography Works</h3>
+                <p style="font-size: 1.125rem; color: var(--muted-foreground); max-width: 42rem; margin: 0 auto;">
+                    Our tool uses LSB (Least Significant Bit) steganography to hide messages in the least noticeable parts of image data
+                </p>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                            <circle cx="9" cy="9" r="2"/>
+                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                        </svg>
+                    </div>
+                    <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">Image Analysis</h4>
+                    <p style="color: var(--muted-foreground); font-size: 0.875rem;">The algorithm analyzes pixel data to determine encoding capacity and optimal bit placement</p>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                            <rect width="12" height="16" x="2" y="4" rx="2"/>
+                            <path d="m22 7-5-5"/>
+                            <path d="M14 3h5v5"/>
+                        </svg>
+                    </div>
+                    <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">Bit Manipulation</h4>
+                    <p style="color: var(--muted-foreground); font-size: 0.875rem;">Text is converted to binary and embedded into the least significant bits of pixel color values</p>
+                </div>
+                
+                <div class="info-item">
+                    <div class="info-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                            <rect width="12" height="16" x="2" y="4" rx="2"/>
+                            <path d="m22 7-5-5"/>
+                            <path d="M14 3h5v5"/>
+                        </svg>
+                    </div>
+                    <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">Invisible Changes</h4>
+                    <p style="color: var(--muted-foreground); font-size: 0.875rem;">Modifications are imperceptible to the human eye while preserving the hidden message</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Details -->
+    <section class="tech-section">
+        <div class="container">
+            <div class="card">
+                <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem;">Technical Specifications</h3>
+                
+                <div class="tech-grid">
+                    <div>
+                        <h4 style="font-weight: 500; margin-bottom: 0.75rem;">Supported Formats</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-family: var(--font-mono); font-size: 0.75rem; background-color: var(--muted); padding: 0.25rem 0.5rem; margin-right: 0.5rem;">PNG</span>
+                                <span style="font-size: 0.875rem; color: var(--muted-foreground);">Lossless compression (recommended)</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-family: var(--font-mono); font-size: 0.75rem; background-color: var(--muted); padding: 0.25rem 0.5rem; margin-right: 0.5rem;">JPEG</span>
+                                <span style="font-size: 0.875rem; color: var(--muted-foreground);">Lossy compression (limited capacity)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 style="font-weight: 500; margin-bottom: 0.75rem;">Security Features</h4>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.875rem; color: var(--muted-foreground);">
+                            <li>• Client-side processing only</li>
+                            <li>• Optional password protection</li>
+                            <li>• LSB encryption algorithm</li>
+                            <li>• No data transmitted to servers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <input type="file" id="encode-file-input" accept="image/png,image/jpeg" style="display: none;" onchange="handleEncodeFile(event)">
+    <input type="file" id="decode-file-input" accept="image/png,image/jpeg" style="display: none;" onchange="handleDecodeFile(event)">
+    <a id="download-link" style="display: none;"></a>
+
+    <script>
+        // Global state
+        let encodeFile = null;
+        let decodeFile = null;
+        let encodedImageUrl = null;
+
+        // Utility functions
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+
+        function stringToBinary(str) {
+            return str.split('').map(char => 
+                char.charCodeAt(0).toString(2).padStart(8, '0')
+            ).join('');
+        }
+
+        function binaryToString(binary) {
+            const chunks = binary.match(/.{1,8}/g) || [];
+            return chunks.map(chunk => 
+                String.fromCharCode(parseInt(chunk, 2))
+            ).join('');
+        }
+
+        function calculateCapacity(width, height) {
+            const totalBits = width * height * 3;
+            const metadataBits = 64;
+            const availableBits = totalBits - metadataBits;
+            return Math.floor(availableBits / 8);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function showToast(title, description, isError = false) {
+            alert((isError ? 'Error: ' : '') + title + '\n' + description);
+        }
+
+        // Navigation
+        function scrollToHowItWorks() {
+            document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // File handling
+        function selectEncodeFile() {
+            document.getElementById('encode-file-input').click();
+        }
+
+        function selectDecodeFile() {
+            document.getElementById('decode-file-input').click();
+        }
+
+        function handleEncodeFile(event) {
+            const file = event.target.files[0];
+            if (file && file.size <= 10 * 1024 * 1024) {
+                setEncodeFile(file);
+            }
+        }
+
+        function handleDecodeFile(event) {
+            const file = event.target.files[0];
+            if (file && file.size <= 10 * 1024 * 1024) {
+                setDecodeFile(file);
+            }
+        }
+
+        function setEncodeFile(file) {
+            encodeFile = file;
+            const dropzone = document.getElementById('encode-dropzone');
+            const preview = document.getElementById('encode-file-preview');
+            
+            if (file) {
+                dropzone.classList.add('hidden');
+                preview.classList.remove('hidden');
+                
+                document.getElementById('encode-thumbnail').src = URL.createObjectURL(file);
+                document.getElementById('encode-filename').textContent = file.name;
+                document.getElementById('encode-filesize').textContent = formatFileSize(file.size);
+                
+                // Update capacity
+                const img = new Image();
+                img.onload = () => {
+                    const capacity = calculateCapacity(img.width, img.height);
+                    document.getElementById('capacity-count').textContent = `Capacity: ${capacity.toLocaleString()} characters`;
+                };
+                img.src = URL.createObjectURL(file);
+            } else {
+                dropzone.classList.remove('hidden');
+                preview.classList.add('hidden');
+                document.getElementById('capacity-count').textContent = 'Capacity: Select image';
+            }
+            
+            // Clear encoded result
+            document.getElementById('encode-result').classList.add('hidden');
+            updateEncodeButton();
+        }
+
+        function setDecodeFile(file) {
+            decodeFile = file;
+            const dropzone = document.getElementById('decode-dropzone');
+            const preview = document.getElementById('decode-file-preview');
+            
+            if (file) {
+                dropzone.classList.add('hidden');
+                preview.classList.remove('hidden');
+                
+                document.getElementById('decode-thumbnail').src = URL.createObjectURL(file);
+                document.getElementById('decode-filename').textContent = file.name;
+                document.getElementById('decode-filesize').textContent = formatFileSize(file.size);
+            } else {
+                dropzone.classList.remove('hidden');
+                preview.classList.add('hidden');
+            }
+            
+            // Clear decoded result
+            document.getElementById('message-placeholder').classList.remove('hidden');
+            document.getElementById('message-content').classList.add('hidden');
+            document.getElementById('decode-result').classList.add('hidden');
+            updateDecodeButton();
+        }
+
+        function removeEncodeFile() {
+            setEncodeFile(null);
+            document.getElementById('encode-file-input').value = '';
+        }
+
+        function removeDecodeFile() {
+            setDecodeFile(null);
+            document.getElementById('decode-file-input').value = '';
+        }
+
+        // UI updates
+        function updateCharCount() {
+            const message = document.getElementById('secret-message').value;
+            document.getElementById('char-count').textContent = `${message.length} characters`;
+            updateEncodeButton();
+        }
+
+        function togglePasswordField() {
+            const checkbox = document.getElementById('password-protect');
+            const passwordField = document.getElementById('encode-password');
+            
+            if (checkbox.checked) {
+                passwordField.classList.remove('hidden');
+            } else {
+                passwordField.classList.add('hidden');
+                passwordField.value = '';
+            }
+        }
+
+        function updateEncodeButton() {
+            const button = document.getElementById('encode-button');
+            const message = document.getElementById('secret-message').value.trim();
+            button.disabled = !encodeFile || !message;
+        }
+
+        function updateDecodeButton() {
+            const button = document.getElementById('decode-button');
+            button.disabled = !decodeFile;
+        }
+
+        // Steganography functions
+        function loadImageToCanvas(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    if (!ctx) {
+                        reject(new Error('Could not get canvas context'));
+                        return;
+                    }
+                    
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+                    
+                    resolve({ canvas, ctx });
+                };
+                img.onerror = () => reject(new Error('Failed to load image'));
+                img.src = URL.createObjectURL(file);
+            });
+        }
+
+        async function encodeMessage() {
+            const message = document.getElementById('secret-message').value.trim();
+            const usePassword = document.getElementById('password-protect').checked;
+            const password = document.getElementById('encode-password').value;
+            
+            if (!encodeFile || !message) {
+                showToast("Missing Information", "Please select an image and enter a message to encode.", true);
+                return;
+            }
+            
+            if (usePassword && !password.trim()) {
+                showToast("Password Required", "Please enter a password for protection.", true);
+                return;
+            }
+            
+            // Show progress
+            document.getElementById('encode-button').disabled = true;
+            document.getElementById('encode-progress').classList.remove('hidden');
+            document.getElementById('encode-result').classList.add('hidden');
+            
+            try {
+                const { canvas, ctx } = await loadImageToCanvas(encodeFile);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // Prepare message
+                let fullMessage = message;
+                if (usePassword && password) {
+                    const key = simpleHash(password);
+                    fullMessage = message.split('').map((char, i) => 
+                        String.fromCharCode(char.charCodeAt(0) ^ ((key + i) % 256))
+                    ).join('');
+                }
+                
+                const delimiter = String.fromCharCode(0, 0, 0, 0);
+                const messageWithDelimiter = fullMessage + delimiter;
+                const messageBinary = stringToBinary(messageWithDelimiter);
+                
+                // Check capacity
+                const capacity = calculateCapacity(canvas.width, canvas.height);
+                if (messageWithDelimiter.length > capacity) {
+                    throw new Error(`Message too long. Maximum capacity: ${capacity} characters`);
+                }
+                
+                // Encode length + message
+                const lengthBinary = message.length.toString(2).padStart(32, '0');
+                const fullBinary = lengthBinary + messageBinary;
+                
+                let binaryIndex = 0;
+                const totalPixels = canvas.width * canvas.height;
+                
+                // Hide binary data in LSBs
+                for (let i = 0; i < data.length && binaryIndex < fullBinary.length; i += 4) {
+                    for (let channel = 0; channel < 3 && binaryIndex < fullBinary.length; channel++) {
+                        const pixelIndex = i + channel;
+                        if (pixelIndex < data.length) {
+                            data[pixelIndex] = (data[pixelIndex] & 0xFE) | parseInt(fullBinary[binaryIndex]);
+                            binaryIndex++;
+                        }
+                    }
+                    
+                    // Update progress
+                    if (i % 12000 === 0) {
+                        const progress = Math.min(95, (i / 4) / totalPixels * 100);
+                        document.getElementById('encode-progress-fill').style.width = progress + '%';
+                        document.getElementById('encode-progress-text').textContent = Math.round(progress) + '%';
+                        await new Promise(resolve => setTimeout(resolve, 1));
+                    }
+                }
+                
+                ctx.putImageData(imageData, 0, 0);
+                
+                // Convert to blob
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        encodedImageUrl = URL.createObjectURL(blob);
+                        
+                        // Update progress to 100%
+                        document.getElementById('encode-progress-fill').style.width = '100%';
+                        document.getElementById('encode-progress-text').textContent = '100%';
+                        
+                        setTimeout(() => {
+                            document.getElementById('encode-progress').classList.add('hidden');
+                            document.getElementById('encode-result').classList.remove('hidden');
+                            document.getElementById('encode-button').disabled = false;
+                        }, 500);
+                        
+                        showToast("Encoding Successful", "Your message has been hidden in the image. You can now download it.");
+                    } else {
+                        throw new Error('Failed to create image blob');
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Encoding error:', error);
+                showToast("Encoding Failed", "Failed to encode the message. Please try with a different image.", true);
+                document.getElementById('encode-progress').classList.add('hidden');
+                document.getElementById('encode-button').disabled = false;
+            }
+        }
+
+        async function decodeMessage() {
+            const password = document.getElementById('decode-password').value;
+            
+            if (!decodeFile) {
+                showToast("No Image Selected", "Please select an image to decode.", true);
+                return;
+            }
+            
+            // Show progress
+            document.getElementById('decode-button').disabled = true;
+            document.getElementById('decode-progress').classList.remove('hidden');
+            document.getElementById('decode-result').classList.add('hidden');
+            
+            try {
+                const { canvas, ctx } = await loadImageToCanvas(decodeFile);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+                
+                // Extract message length from first 32 bits
+                let binaryData = '';
+                let binaryIndex = 0;
+                
+                for (let i = 0; i < data.length && binaryIndex < 32; i += 4) {
+                    for (let channel = 0; channel < 3 && binaryIndex < 32; channel++) {
+                        const pixelIndex = i + channel;
+                        if (pixelIndex < data.length) {
+                            binaryData += (data[pixelIndex] & 1).toString();
+                            binaryIndex++;
+                        }
+                    }
+                }
+                
+                const messageLength = parseInt(binaryData, 2);
+                if (messageLength <= 0 || messageLength > 1000000) {
+                    throw new Error('Invalid message length');
+                }
+                
+                // Extract the actual message
+                binaryData = '';
+                binaryIndex = 32;
+                const messageBits = messageLength * 8;
+                let extractedBits = 0;
+                
+                for (let i = Math.floor(binaryIndex / 3) * 4; i < data.length && extractedBits < messageBits; i += 4) {
+                    for (let channel = 0; channel < 3 && extractedBits < messageBits; channel++) {
+                        const pixelIndex = i + channel;
+                        const globalBitIndex = Math.floor(pixelIndex / 4) * 3 + channel;
+                        
+                        if (globalBitIndex >= binaryIndex && pixelIndex < data.length) {
+                            binaryData += (data[pixelIndex] & 1).toString();
+                            extractedBits++;
+                        }
+                    }
+                    
+                    // Update progress
+                    if (i % 12000 === 0) {
+                        const progress = Math.min(95, extractedBits / messageBits * 100);
+                        document.getElementById('decode-progress-fill').style.width = progress + '%';
+                        document.getElementById('decode-progress-text').textContent = Math.round(progress) + '%';
+                        await new Promise(resolve => setTimeout(resolve, 1));
+                    }
+                }
+                
+                // Convert binary to string
+                let message = binaryToString(binaryData);
+                
+                // Decrypt if password was used
+                if (password) {
+                    const key = simpleHash(password);
+                    try {
+                        message = message.split('').map((char, i) => 
+                            String.fromCharCode(char.charCodeAt(0) ^ ((key + i) % 256))
+                        ).join('');
+                    } catch (error) {
+                        throw new Error('Wrong password');
+                    }
+                }
+                
+                // Update progress to 100%
+                document.getElementById('decode-progress-fill').style.width = '100%';
+                document.getElementById('decode-progress-text').textContent = '100%';
+                
+                setTimeout(() => {
+                    document.getElementById('decode-progress').classList.add('hidden');
+                    document.getElementById('decode-button').disabled = false;
+                    
+                    if (message && message.length > 0) {
+                        // Show decoded message
+                        document.getElementById('message-placeholder').classList.add('hidden');
+                        document.getElementById('message-content').classList.remove('hidden');
+                        document.getElementById('decoded-text').textContent = message;
+                        
+                        // Show success result
+                        const resultDiv = document.getElementById('decode-result');
+                        resultDiv.innerHTML = `
+                            <div class="result-box">
+                                <p style="color: var(--primary); font-weight: 500;">Message Extracted Successfully!</p>
+                                <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">The hidden message has been revealed above</p>
+                            </div>
+                        `;
+                        resultDiv.classList.remove('hidden');
+                        
+                        showToast("Message Extracted", "The hidden message has been successfully extracted.");
+                    } else {
+                        // Show failure result
+                        const resultDiv = document.getElementById('decode-result');
+                        resultDiv.innerHTML = `
+                            <div class="result-box error">
+                                <p style="color: var(--destructive); font-weight: 500;">No Message Found</p>
+                                <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">This image may not contain a hidden message or the password is incorrect</p>
+                            </div>
+                        `;
+                        resultDiv.classList.remove('hidden');
+                        
+                        showToast("No Message Found", "This image may not contain a hidden message or the password is incorrect.", true);
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('Decoding error:', error);
+                document.getElementById('decode-progress').classList.add('hidden');
+                document.getElementById('decode-button').disabled = false;
+                
+                const resultDiv = document.getElementById('decode-result');
+                resultDiv.innerHTML = `
+                    <div class="result-box error">
+                        <p style="color: var(--destructive); font-weight: 500;">Decoding Failed</p>
+                        <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">Failed to decode the message. Please check the image and password.</p>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+                
+                showToast("Decoding Failed", "Failed to decode the message. Please check the image and password.", true);
+            }
+        }
+
+        function removeEncodeFile() {
+            setEncodeFile(null);
+            document.getElementById('encode-file-input').value = '';
+        }
+
+        function removeDecodeFile() {
+            setDecodeFile(null);
+            document.getElementById('decode-file-input').value = '';
+        }
+
+        function downloadImage() {
+            if (!encodedImageUrl || !encodeFile) return;
+            
+            const link = document.getElementById('download-link');
+            link.href = encodedImageUrl;
+            link.download = `encoded_${encodeFile.name}`;
+            link.click();
+        }
+
+        function copyMessage() {
+            const message = document.getElementById('decoded-text').textContent;
+            navigator.clipboard.writeText(message).then(() => {
+                showToast("Copied", "Message copied to clipboard.");
+            }).catch(() => {
+                showToast("Copy Failed", "Failed to copy message to clipboard.", true);
+            });
+        }
+
+        // Drag and drop functionality
+        function setupDragAndDrop(dropzoneId, fileHandler) {
+            const dropzone = document.getElementById(dropzoneId);
+            
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('drag-over');
+            });
+            
+            dropzone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('drag-over');
+            });
+            
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('drag-over');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.size <= 10 * 1024 * 1024 && (file.type === 'image/png' || file.type === 'image/jpeg')) {
+                        fileHandler(file);
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupDragAndDrop('encode-dropzone', setEncodeFile);
+            setupDragAndDrop('decode-dropzone', setDecodeFile);
+            updateEncodeButton();
+            updateDecodeButton();
+        });
+    </script>
+</body>
+</html>
