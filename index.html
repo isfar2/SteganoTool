@@ -533,7 +533,6 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <h2>Hide Messages in Images</h2>
@@ -544,19 +543,16 @@
         </div>
     </section>
 
-    <!-- Main Tool -->
     <main class="main-content">
         <div class="container">
             <div class="grid">
                 
-                <!-- Encode Panel -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Encode Message</h3>
                         <span class="badge badge-encode">HIDE</span>
                     </div>
-                    
-                    <!-- Image Upload -->
+
                     <div class="form-group">
                         <label class="label">Cover Image</label>
                         <div id="encode-dropzone" class="dropzone" onclick="selectEncodeFile()" data-testid="encode-dropzone">
@@ -587,7 +583,6 @@
                         </div>
                     </div>
                     
-                    <!-- Message Input -->
                     <div class="form-group">
                         <label for="secret-message" class="label">Secret Message</label>
                         <textarea 
@@ -604,7 +599,6 @@
                         </div>
                     </div>
                     
-                    <!-- Password Protection -->
                     <div class="form-group">
                         <label class="label">Encoding Options</label>
                         <div class="checkbox-group">
@@ -621,7 +615,6 @@
                         >
                     </div>
                     
-                    <!-- Encode Button & Progress -->
                     <div>
                         <button onclick="encodeMessage()" id="encode-button" class="button button-primary" data-testid="button-encode">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -660,15 +653,11 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Decode Panel -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Decode Message</h3>
                         <span class="badge badge-decode">EXTRACT</span>
                     </div>
-                    
-                    <!-- Image Upload -->
                     <div class="form-group">
                         <label class="label">Steganographic Image</label>
                         <div id="decode-dropzone" class="dropzone" onclick="selectDecodeFile()" data-testid="decode-dropzone">
@@ -698,8 +687,6 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <!-- Password Input -->
                     <div class="form-group">
                         <label for="decode-password" class="label">Password (if protected)</label>
                         <input 
@@ -710,8 +697,7 @@
                             data-testid="input-decode-password"
                         >
                     </div>
-                    
-                    <!-- Decode Button & Progress -->
+            
                     <div style="margin-bottom: 1.5rem;">
                         <button onclick="decodeMessage()" id="decode-button" class="button button-secondary" data-testid="button-decode">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -732,8 +718,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Decoded Message Display -->
                     <div class="form-group">
                         <label class="label">Extracted Message</label>
                         <div class="message-display">
@@ -760,15 +744,12 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Decode Result -->
                     <div id="decode-result" class="hidden" data-testid="decode-result"></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Image Converter Section -->
     <section id="image-converter" style="background-color: var(--background); padding: 3rem 0; border-top: 1px solid var(--border);">
         <div class="container">
             <div style="text-align: center; margin-bottom: 3rem;">
@@ -785,7 +766,6 @@
                         <span class="badge" style="background-color: rgba(96, 165, 250, 0.1); color: #3b82f6;">CONVERT</span>
                     </div>
                     
-                    <!-- Source Image Upload -->
                     <div class="form-group">
                         <label class="label">Source Image</label>
                         <div id="convert-dropzone" class="dropzone" onclick="selectConvertFile()" data-testid="convert-dropzone">
@@ -817,9 +797,8 @@
                         </div>
                     </div>
                     
-                    <!-- Conversion Options -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                        <!-- Output Format -->
+
                         <div class="form-group">
                             <label for="output-format" class="label">Output Format</label>
                             <select id="output-format" class="input" onchange="updateQualityControls()" data-testid="select-output-format">
@@ -829,7 +808,6 @@
                             </select>
                         </div>
                         
-                        <!-- Quality Control -->
                         <div class="form-group">
                             <label for="image-quality" class="label">Quality <span id="quality-value">90%</span></label>
                             <input 
@@ -849,7 +827,6 @@
                         </div>
                     </div>
                     
-                    <!-- Convert Button & Progress -->
                     <div>
                         <button onclick="convertImage()" id="convert-button" class="button" style="background-color: #3b82f6; color: white;" data-testid="button-convert">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -891,13 +868,12 @@
         </div>
     </section>
 
-    <!-- How It Works Section -->
     <section id="how-it-works" class="info-section">
         <div class="container">
             <div style="text-align: center; margin-bottom: 3rem;">
                 <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 2rem; margin-bottom: 1rem;">How Steganography Works</h3>
                 <p style="font-size: 1.125rem; color: var(--muted-foreground); max-width: 42rem; margin: 0 auto;">
-                    Our tool uses LSB (Least Significant Bit) steganography to hide messages in the least noticeable parts of image data
+                    This tool uses LSB (Least Significant Bit) steganography to hide messages in the least noticeable parts of image data
                 </p>
             </div>
             
@@ -935,7 +911,7 @@
                         </svg>
                     </div>
                     <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1.125rem; margin-bottom: 0.5rem;">Invisible Changes</h4>
-                    <p style="color: var(--muted-foreground); font-size: 0.875rem;">Modifications are imperceptible to the human eye while preserving the hidden message</p>
+                    <p style="color: var(--muted-foreground); font-size: 0.875rem;">Modifications cant be seen to the human eye while preserving the hidden message</p>
                 </div>
             </div>
         </div>
@@ -983,14 +959,11 @@
     <a id="convert-download-link" style="display: none;"></a>
 
     <script>
-        // Global state
         let encodeFile = null;
         let decodeFile = null;
         let encodedImageUrl = null;
         let convertFile = null;
         let convertedImageUrl = null;
-
-        // Utility functions
         function simpleHash(str) {
             let hash = 0;
             for (let i = 0; i < str.length; i++) {
@@ -1033,7 +1006,6 @@
             alert((isError ? 'Error: ' : '') + title + '\n' + description);
         }
 
-        // Theme management
         function initializeTheme() {
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1060,7 +1032,6 @@
             setTheme(isDark ? 'light' : 'dark');
         }
 
-        // Navigation
         function scrollToHowItWorks() {
             document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
         }
@@ -1069,7 +1040,6 @@
             document.getElementById('image-converter').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // File handling
         function selectEncodeFile() {
             document.getElementById('encode-file-input').click();
         }
@@ -1105,7 +1075,6 @@
                 document.getElementById('encode-filename').textContent = file.name;
                 document.getElementById('encode-filesize').textContent = formatFileSize(file.size);
                 
-                // Update capacity
                 const img = new Image();
                 img.onload = () => {
                     const capacity = calculateCapacity(img.width, img.height);
@@ -1118,7 +1087,6 @@
                 document.getElementById('capacity-count').textContent = 'Capacity: Select image';
             }
             
-            // Clear encoded result
             document.getElementById('encode-result').classList.add('hidden');
             updateEncodeButton();
         }
@@ -1140,7 +1108,6 @@
                 preview.classList.add('hidden');
             }
             
-            // Clear decoded result
             document.getElementById('message-placeholder').classList.remove('hidden');
             document.getElementById('message-content').classList.add('hidden');
             document.getElementById('decode-result').classList.add('hidden');
@@ -1156,8 +1123,6 @@
             setDecodeFile(null);
             document.getElementById('decode-file-input').value = '';
         }
-
-        // UI updates
         function updateCharCount() {
             const message = document.getElementById('secret-message').value;
             document.getElementById('char-count').textContent = `${message.length} characters`;
@@ -1187,7 +1152,6 @@
             button.disabled = !decodeFile;
         }
 
-        // Steganography functions
         function loadImageToCanvas(file) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -1226,7 +1190,6 @@
                 return;
             }
             
-            // Show progress
             document.getElementById('encode-button').disabled = true;
             document.getElementById('encode-progress').classList.remove('hidden');
             document.getElementById('encode-result').classList.add('hidden');
@@ -1236,7 +1199,6 @@
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const data = imageData.data;
                 
-                // Prepare message
                 let fullMessage = message;
                 if (usePassword && password) {
                     const key = simpleHash(password);
@@ -1249,20 +1211,17 @@
                 const messageWithDelimiter = fullMessage + delimiter;
                 const messageBinary = stringToBinary(messageWithDelimiter);
                 
-                // Check capacity
                 const capacity = calculateCapacity(canvas.width, canvas.height);
                 if (messageWithDelimiter.length > capacity) {
                     throw new Error(`Message too long. Maximum capacity: ${capacity} characters`);
                 }
                 
-                // Encode length + message
                 const lengthBinary = message.length.toString(2).padStart(32, '0');
                 const fullBinary = lengthBinary + messageBinary;
                 
                 let binaryIndex = 0;
                 const totalPixels = canvas.width * canvas.height;
                 
-                // Hide binary data in LSBs
                 for (let i = 0; i < data.length && binaryIndex < fullBinary.length; i += 4) {
                     for (let channel = 0; channel < 3 && binaryIndex < fullBinary.length; channel++) {
                         const pixelIndex = i + channel;
@@ -1272,7 +1231,6 @@
                         }
                     }
                     
-                    // Update progress
                     if (i % 12000 === 0) {
                         const progress = Math.min(95, (i / 4) / totalPixels * 100);
                         document.getElementById('encode-progress-fill').style.width = progress + '%';
@@ -1283,12 +1241,10 @@
                 
                 ctx.putImageData(imageData, 0, 0);
                 
-                // Convert to blob
                 canvas.toBlob((blob) => {
                     if (blob) {
                         encodedImageUrl = URL.createObjectURL(blob);
                         
-                        // Update progress to 100%
                         document.getElementById('encode-progress-fill').style.width = '100%';
                         document.getElementById('encode-progress-text').textContent = '100%';
                         
@@ -1320,7 +1276,6 @@
                 return;
             }
             
-            // Show progress
             document.getElementById('decode-button').disabled = true;
             document.getElementById('decode-progress').classList.remove('hidden');
             document.getElementById('decode-result').classList.add('hidden');
@@ -1330,7 +1285,6 @@
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                 const data = imageData.data;
                 
-                // Extract message length from first 32 bits
                 let binaryData = '';
                 let binaryIndex = 0;
                 
@@ -1349,7 +1303,6 @@
                     throw new Error('Invalid message length');
                 }
                 
-                // Extract the actual message
                 binaryData = '';
                 binaryIndex = 32;
                 const messageBits = messageLength * 8;
@@ -1366,7 +1319,6 @@
                         }
                     }
                     
-                    // Update progress
                     if (i % 12000 === 0) {
                         const progress = Math.min(95, extractedBits / messageBits * 100);
                         document.getElementById('decode-progress-fill').style.width = progress + '%';
@@ -1375,28 +1327,23 @@
                     }
                 }
                 
-                // Convert binary to string
                 let message = binaryToString(binaryData);
                 
-                // Check if message looks like it might be password protected
                 function isGarbledText(text) {
                     if (!text || text.length === 0) return false;
                     
-                    // Count non-printable and unusual characters
                     let nonPrintableCount = 0;
                     let controlCharCount = 0;
                     
                     for (let char of text) {
                         const code = char.charCodeAt(0);
                         
-                        // Count control characters (0-31, except newline, tab, carriage return)
                         if (code < 32 && code !== 10 && code !== 13 && code !== 9) {
                             controlCharCount++;
                         }
                         
-                        // Count non-printable ASCII (outside 32-126 range)
                         if (code < 32 || code > 126) {
-                            if (code !== 10 && code !== 13 && code !== 9) { // Exclude common whitespace
+                            if (code !== 10 && code !== 13 && code !== 9) { 
                                 nonPrintableCount++;
                             }
                         }
@@ -1406,11 +1353,9 @@
                     const controlRatio = controlCharCount / totalLength;
                     const nonPrintableRatio = nonPrintableCount / totalLength;
                     
-                    // If more than 30% are control chars or 20% are non-printable, it's garbled
                     return controlRatio > 0.3 || nonPrintableRatio > 0.2;
                 }
                 
-                // Decrypt if password was used
                 if (password) {
                     const key = simpleHash(password);
                     try {
@@ -1422,7 +1367,6 @@
                     }
                 }
                 
-                // Update progress to 100%
                 document.getElementById('decode-progress-fill').style.width = '100%';
                 document.getElementById('decode-progress-text').textContent = '100%';
                 
@@ -1431,9 +1375,8 @@
                     document.getElementById('decode-button').disabled = false;
                     
                     if (message && message.length > 0) {
-                        // Check if the message appears to be garbled (password protected)
+
                         if (isGarbledText(message) && !password) {
-                            // Show password protection warning, keep message hidden
                             document.getElementById('message-placeholder').classList.remove('hidden');
                             document.getElementById('message-content').classList.add('hidden');
                             
@@ -1448,7 +1391,6 @@
                             
                             showToast("Password Protected", "This file is password protected. Please enter the correct password to decode the hidden message.", true);
                         } else if (isGarbledText(message) && password) {
-                            // Wrong password, keep message hidden
                             document.getElementById('message-placeholder').classList.remove('hidden');
                             document.getElementById('message-content').classList.add('hidden');
                             
@@ -1463,12 +1405,11 @@
                             
                             showToast("Incorrect Password", "The password you entered is incorrect. Please try again.", true);
                         } else {
-                            // Show decoded message
+
                             document.getElementById('message-placeholder').classList.add('hidden');
                             document.getElementById('message-content').classList.remove('hidden');
                             document.getElementById('decoded-text').textContent = message;
                             
-                            // Show success result
                             const resultDiv = document.getElementById('decode-result');
                             resultDiv.innerHTML = `
                                 <div class="result-box">
@@ -1481,7 +1422,6 @@
                             showToast("Message Extracted", "The hidden message has been successfully extracted.");
                         }
                     } else {
-                        // Show failure result
                         const resultDiv = document.getElementById('decode-result');
                         resultDiv.innerHTML = `
                             <div class="result-box error">
@@ -1541,7 +1481,6 @@
             });
         }
 
-        // Drag and drop functionality
         function setupDragAndDrop(dropzoneId, fileHandler) {
             const dropzone = document.getElementById(dropzoneId);
             
@@ -1645,23 +1584,19 @@
             document.getElementById('convert-result').classList.add('hidden');
             
             try {
-                // Load image to canvas
                 const { canvas, ctx } = await loadImageToCanvas(convertFile);
                 
-                // Update progress
                 document.getElementById('convert-progress-fill').style.width = '50%';
                 document.getElementById('convert-progress-text').textContent = '50%';
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // Convert to new format
                 const mimeType = `image/${outputFormat}`;
                 
                 canvas.toBlob((blob) => {
                     if (blob) {
                         convertedImageUrl = URL.createObjectURL(blob);
                         
-                        // Update progress to 100%
                         document.getElementById('convert-progress-fill').style.width = '100%';
                         document.getElementById('convert-progress-text').textContent = '100%';
                         
@@ -1669,7 +1604,6 @@
                             document.getElementById('convert-progress').classList.add('hidden');
                             document.getElementById('convert-button').disabled = false;
                             
-                            // Show result
                             const originalSize = formatFileSize(convertFile.size);
                             const newSize = formatFileSize(blob.size);
                             const savings = ((convertFile.size - blob.size) / convertFile.size * 100).toFixed(1);
@@ -1706,7 +1640,6 @@
             link.click();
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             initializeTheme();
             setupDragAndDrop('encode-dropzone', setEncodeFile);
