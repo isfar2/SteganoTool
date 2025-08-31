@@ -20,19 +20,12 @@
 
 SteganoTool uses **Least Significant Bit (LSB)** manipulation to embed secret messages into the pixel data of images.
 
-1. The image is analyzed to find optimal bit placement.
+1. The image is analyzed to find the best bit placement.
 2. Your message is converted into binary.
 3. The binary message is written into the image’s least significant pixel bits.
-4. Visually, the image appears unchanged—but it now contains hidden data.
+4. Visually, the image appears unchanged but it now contains hidden data which can be **decoded**.
 
-> All changes are imperceptible to the human eye.
-
----
-
-## Live Demo
-
-You can try it live at:  
-🔗 [https://isfar2.github.io/SteganoTool/](https://isfar2.github.io/SteganoTool/)  
+> No changes are visible to the human eye.
 
 ---
 
@@ -40,17 +33,18 @@ You can try it live at:
 
 ### Encode (Hide Message)
 
-1. Upload or drag-and-drop your **cover image**.
-2. Enter the **secret message**.
+1. Upload or drag-and-drop your **image**.
+2. Enter the **secret message** to be embedded into the image.
 3. (Optional) Add a **password** to protect the message.
-4. Click **HIDE** to generate the steganographic image.
-5. Download the resulting image.
+4. Click **Encode Message** to generate the steganographic image.
+5. Download the image.
 
 ### Decode (Extract Message)
 
 1. Upload the **steganographic image**.
 2. (If needed) Enter the **password**.
 3. Click **EXTRACT** to reveal the hidden message.
+> If the image is password protected, you may see garbled text.   
 
 ### Image Format Converter
 
