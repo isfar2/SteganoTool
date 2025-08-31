@@ -1160,20 +1160,32 @@
                 function isGarbledText(text) {
                     if (!text || text.length === 0) return false;
                     
-                    // Count readable characters vs total
-                    let readableChars = 0;
+                    // Count non-printable and unusual characters
+                    let nonPrintableCount = 0;
+                    let controlCharCount = 0;
+                    
                     for (let char of text) {
                         const code = char.charCodeAt(0);
-                        // Consider printable ASCII characters as readable
-                        if ((code >= 32 && code <= 126) || char === '\n' || char === '\r' || char === '\t') {
-                            readableChars++;
+                        
+                        // Count control characters (0-31, except newline, tab, carriage return)
+                        if (code < 32 && code !== 10 && code !== 13 && code !== 9) {
+                            controlCharCount++;
+                        }
+                        
+                        // Count non-printable ASCII (outside 32-126 range)
+                        if (code < 32 || code > 126) {
+                            if (code !== 10 && code !== 13 && code !== 9) { // Exclude common whitespace
+                                nonPrintableCount++;
+                            }
                         }
                     }
                     
-                    const readableRatio = readableChars / text.length;
+                    const totalLength = text.length;
+                    const controlRatio = controlCharCount / totalLength;
+                    const nonPrintableRatio = nonPrintableCount / totalLength;
                     
-                    // If less than 70% of characters are readable, it's probably garbled
-                    return readableRatio < 0.7;
+                    // If more than 30% are control chars or 20% are non-printable, it's garbled
+                    return controlRatio > 0.3 || nonPrintableRatio > 0.2;
                 }
                 
                 // Decrypt if password was used
@@ -1199,7 +1211,10 @@
                     if (message && message.length > 0) {
                         // Check if the message appears to be garbled (password protected)
                         if (isGarbledText(message) && !password) {
-                            // Show password protection warning
+                            // Show password protection warning, keep message hidden
+                            document.getElementById('message-placeholder').classList.remove('hidden');
+                            document.getElementById('message-content').classList.add('hidden');
+                            
                             const resultDiv = document.getElementById('decode-result');
                             resultDiv.innerHTML = `
                                 <div class="result-box error">
@@ -1211,7 +1226,10 @@
                             
                             showToast("Password Protected", "This file is password protected. Please enter the correct password to decode the hidden message.", true);
                         } else if (isGarbledText(message) && password) {
-                            // Wrong password
+                            // Wrong password, keep message hidden
+                            document.getElementById('message-placeholder').classList.remove('hidden');
+                            document.getElementById('message-content').classList.add('hidden');
+                            
                             const resultDiv = document.getElementById('decode-result');
                             resultDiv.innerHTML = `
                                 <div class="result-box error">
