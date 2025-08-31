@@ -1156,6 +1156,26 @@
                 // Convert binary to string
                 let message = binaryToString(binaryData);
                 
+                // Check if message looks like it might be password protected
+                function isGarbledText(text) {
+                    if (!text || text.length === 0) return false;
+                    
+                    // Count readable characters vs total
+                    let readableChars = 0;
+                    for (let char of text) {
+                        const code = char.charCodeAt(0);
+                        // Consider printable ASCII characters as readable
+                        if ((code >= 32 && code <= 126) || char === '\n' || char === '\r' || char === '\t') {
+                            readableChars++;
+                        }
+                    }
+                    
+                    const readableRatio = readableChars / text.length;
+                    
+                    // If less than 70% of characters are readable, it's probably garbled
+                    return readableRatio < 0.7;
+                }
+                
                 // Decrypt if password was used
                 if (password) {
                     const key = simpleHash(password);
@@ -1177,34 +1197,61 @@
                     document.getElementById('decode-button').disabled = false;
                     
                     if (message && message.length > 0) {
-                        // Show decoded message
-                        document.getElementById('message-placeholder').classList.add('hidden');
-                        document.getElementById('message-content').classList.remove('hidden');
-                        document.getElementById('decoded-text').textContent = message;
-                        
-                        // Show success result
-                        const resultDiv = document.getElementById('decode-result');
-                        resultDiv.innerHTML = `
-                            <div class="result-box">
-                                <p style="color: var(--primary); font-weight: 500;">Message Extracted Successfully!</p>
-                                <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">The hidden message has been revealed above</p>
-                            </div>
-                        `;
-                        resultDiv.classList.remove('hidden');
-                        
-                        showToast("Message Extracted", "The hidden message has been successfully extracted.");
+                        // Check if the message appears to be garbled (password protected)
+                        if (isGarbledText(message) && !password) {
+                            // Show password protection warning
+                            const resultDiv = document.getElementById('decode-result');
+                            resultDiv.innerHTML = `
+                                <div class="result-box error">
+                                    <p style="color: var(--destructive); font-weight: 500;">This file is password protected</p>
+                                    <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">Please enter the correct password to decode the hidden message</p>
+                                </div>
+                            `;
+                            resultDiv.classList.remove('hidden');
+                            
+                            showToast("Password Protected", "This file is password protected. Please enter the correct password to decode the hidden message.", true);
+                        } else if (isGarbledText(message) && password) {
+                            // Wrong password
+                            const resultDiv = document.getElementById('decode-result');
+                            resultDiv.innerHTML = `
+                                <div class="result-box error">
+                                    <p style="color: var(--destructive); font-weight: 500;">Incorrect Password</p>
+                                    <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">The password you entered is incorrect. Please try again</p>
+                                </div>
+                            `;
+                            resultDiv.classList.remove('hidden');
+                            
+                            showToast("Incorrect Password", "The password you entered is incorrect. Please try again.", true);
+                        } else {
+                            // Show decoded message
+                            document.getElementById('message-placeholder').classList.add('hidden');
+                            document.getElementById('message-content').classList.remove('hidden');
+                            document.getElementById('decoded-text').textContent = message;
+                            
+                            // Show success result
+                            const resultDiv = document.getElementById('decode-result');
+                            resultDiv.innerHTML = `
+                                <div class="result-box">
+                                    <p style="color: var(--primary); font-weight: 500;">Message Extracted Successfully!</p>
+                                    <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">The hidden message has been revealed above</p>
+                                </div>
+                            `;
+                            resultDiv.classList.remove('hidden');
+                            
+                            showToast("Message Extracted", "The hidden message has been successfully extracted.");
+                        }
                     } else {
                         // Show failure result
                         const resultDiv = document.getElementById('decode-result');
                         resultDiv.innerHTML = `
                             <div class="result-box error">
                                 <p style="color: var(--destructive); font-weight: 500;">No Message Found</p>
-                                <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">This image may not contain a hidden message or the password is incorrect</p>
+                                <p style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;">This image may not contain a hidden message</p>
                             </div>
                         `;
                         resultDiv.classList.remove('hidden');
                         
-                        showToast("No Message Found", "This image may not contain a hidden message or the password is incorrect.", true);
+                        showToast("No Message Found", "This image may not contain a hidden message.", true);
                     }
                 }, 500);
                 
