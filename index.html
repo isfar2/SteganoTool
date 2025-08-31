@@ -436,6 +436,22 @@
             opacity: 0.8;
         }
 
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--foreground);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--muted);
+        }
+
         @media (max-width: 768px) {
             .header-content nav {
                 display: none;
@@ -460,12 +476,21 @@
                     </div>
                     <h1 class="logo-text">SteganoTool</h1>
                 </div>
-                <nav>
+                <nav style="display: flex; align-items: center; gap: 1.5rem;">
                     <button onclick="scrollToConverter()" class="nav-button" data-testid="nav-converter">
                         Image Converter
                     </button>
                     <button onclick="scrollToHowItWorks()" class="nav-button" data-testid="nav-how-it-works">
                         How it Works
+                    </button>
+                    <button onclick="toggleTheme()" class="theme-toggle" data-testid="theme-toggle" title="Toggle dark/light mode">
+                        <svg id="theme-icon-light" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                        <svg id="theme-icon-dark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
                     </button>
                 </nav>
             </div>
@@ -917,13 +942,17 @@
 
     <input type="file" id="encode-file-input" accept="image/png,image/jpeg" style="display: none;" onchange="handleEncodeFile(event)">
     <input type="file" id="decode-file-input" accept="image/png,image/jpeg" style="display: none;" onchange="handleDecodeFile(event)">
+    <input type="file" id="convert-file-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display: none;" onchange="handleConvertFile(event)">
     <a id="download-link" style="display: none;"></a>
+    <a id="convert-download-link" style="display: none;"></a>
 
     <script>
         // Global state
         let encodeFile = null;
         let decodeFile = null;
         let encodedImageUrl = null;
+        let convertFile = null;
+        let convertedImageUrl = null;
 
         // Utility functions
         function simpleHash(str) {
@@ -968,9 +997,40 @@
             alert((isError ? 'Error: ' : '') + title + '\n' + description);
         }
 
+        // Theme management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            
+            setTheme(theme);
+        }
+
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon-light').style.display = 'none';
+                document.getElementById('theme-icon-dark').style.display = 'block';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon-light').style.display = 'block';
+                document.getElementById('theme-icon-dark').style.display = 'none';
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            setTheme(isDark ? 'light' : 'dark');
+        }
+
         // Navigation
         function scrollToHowItWorks() {
             document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToConverter() {
+            document.getElementById('image-converter').scrollIntoView({ behavior: 'smooth' });
         }
 
         // File handling
@@ -1473,12 +1533,153 @@
             });
         }
 
+        // Image converter functions
+        function selectConvertFile() {
+            document.getElementById('convert-file-input').click();
+        }
+
+        function handleConvertFile(event) {
+            const file = event.target.files[0];
+            if (file && file.size <= 10 * 1024 * 1024) {
+                setConvertFile(file);
+            }
+        }
+
+        function setConvertFile(file) {
+            convertFile = file;
+            const dropzone = document.getElementById('convert-dropzone');
+            const preview = document.getElementById('convert-file-preview');
+            
+            if (file) {
+                dropzone.classList.add('hidden');
+                preview.classList.remove('hidden');
+                
+                document.getElementById('convert-thumbnail').src = URL.createObjectURL(file);
+                document.getElementById('convert-filename').textContent = file.name;
+                document.getElementById('convert-filesize').textContent = formatFileSize(file.size);
+                document.getElementById('convert-format').textContent = `Format: ${file.type.split('/')[1].toUpperCase()}`;
+            } else {
+                dropzone.classList.remove('hidden');
+                preview.classList.add('hidden');
+            }
+            
+            document.getElementById('convert-result').classList.add('hidden');
+            updateConvertButton();
+        }
+
+        function removeConvertFile() {
+            setConvertFile(null);
+            document.getElementById('convert-file-input').value = '';
+        }
+
+        function updateQualityControls() {
+            const format = document.getElementById('output-format').value;
+            const qualityContainer = document.getElementById('image-quality').parentElement;
+            
+            if (format === 'png') {
+                qualityContainer.style.opacity = '0.5';
+                qualityContainer.style.pointerEvents = 'none';
+            } else {
+                qualityContainer.style.opacity = '1';
+                qualityContainer.style.pointerEvents = 'auto';
+            }
+        }
+
+        function updateQualityValue() {
+            const quality = document.getElementById('image-quality').value;
+            document.getElementById('quality-value').textContent = quality + '%';
+        }
+
+        function updateConvertButton() {
+            const button = document.getElementById('convert-button');
+            button.disabled = !convertFile;
+        }
+
+        async function convertImage() {
+            if (!convertFile) {
+                showToast("No Image Selected", "Please select an image to convert.", true);
+                return;
+            }
+            
+            const outputFormat = document.getElementById('output-format').value;
+            const quality = parseInt(document.getElementById('image-quality').value) / 100;
+            
+            document.getElementById('convert-button').disabled = true;
+            document.getElementById('convert-progress').classList.remove('hidden');
+            document.getElementById('convert-result').classList.add('hidden');
+            
+            try {
+                // Load image to canvas
+                const { canvas, ctx } = await loadImageToCanvas(convertFile);
+                
+                // Update progress
+                document.getElementById('convert-progress-fill').style.width = '50%';
+                document.getElementById('convert-progress-text').textContent = '50%';
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Convert to new format
+                const mimeType = `image/${outputFormat}`;
+                
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        convertedImageUrl = URL.createObjectURL(blob);
+                        
+                        // Update progress to 100%
+                        document.getElementById('convert-progress-fill').style.width = '100%';
+                        document.getElementById('convert-progress-text').textContent = '100%';
+                        
+                        setTimeout(() => {
+                            document.getElementById('convert-progress').classList.add('hidden');
+                            document.getElementById('convert-button').disabled = false;
+                            
+                            // Show result
+                            const originalSize = formatFileSize(convertFile.size);
+                            const newSize = formatFileSize(blob.size);
+                            const savings = ((convertFile.size - blob.size) / convertFile.size * 100).toFixed(1);
+                            
+                            document.getElementById('convert-details').textContent = 
+                                `${originalSize} → ${newSize} (${savings > 0 ? savings + '% smaller' : 'larger'})`;
+                            document.getElementById('convert-result').classList.remove('hidden');
+                            
+                            showToast("Conversion Successful", `Image converted to ${outputFormat.toUpperCase()} format.`);
+                        }, 500);
+                        
+                    } else {
+                        throw new Error('Failed to convert image');
+                    }
+                }, mimeType, outputFormat === 'png' ? undefined : quality);
+                
+            } catch (error) {
+                console.error('Conversion error:', error);
+                document.getElementById('convert-progress').classList.add('hidden');
+                document.getElementById('convert-button').disabled = false;
+                showToast("Conversion Failed", "Failed to convert the image. Please try again.", true);
+            }
+        }
+
+        function downloadConvertedImage() {
+            if (!convertedImageUrl || !convertFile) return;
+            
+            const outputFormat = document.getElementById('output-format').value;
+            const fileName = convertFile.name.replace(/\.[^/.]+$/, "") + '.' + outputFormat;
+            
+            const link = document.getElementById('convert-download-link');
+            link.href = convertedImageUrl;
+            link.download = fileName;
+            link.click();
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            initializeTheme();
             setupDragAndDrop('encode-dropzone', setEncodeFile);
             setupDragAndDrop('decode-dropzone', setDecodeFile);
+            setupDragAndDrop('convert-dropzone', setConvertFile);
             updateEncodeButton();
             updateDecodeButton();
+            updateConvertButton();
+            updateQualityControls();
         });
     </script>
 </body>
