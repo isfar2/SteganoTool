@@ -461,6 +461,9 @@
                     <h1 class="logo-text">SteganoTool</h1>
                 </div>
                 <nav>
+                    <button onclick="scrollToConverter()" class="nav-button" data-testid="nav-converter">
+                        Image Converter
+                    </button>
                     <button onclick="scrollToHowItWorks()" class="nav-button" data-testid="nav-how-it-works">
                         How it Works
                     </button>
@@ -703,6 +706,129 @@
             </div>
         </div>
     </main>
+
+    <!-- Image Converter Section -->
+    <section id="image-converter" style="background-color: var(--background); padding: 3rem 0; border-top: 1px solid var(--border);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-family: var(--font-sans); font-weight: 700; font-size: 2.5rem; margin-bottom: 1rem;">Image Format Converter</h2>
+                <p style="font-size: 1.125rem; color: var(--muted-foreground); max-width: 42rem; margin: 0 auto;">
+                    Convert your images between different formats with customizable quality settings
+                </p>
+            </div>
+
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Convert Image Format</h3>
+                        <span class="badge" style="background-color: rgba(96, 165, 250, 0.1); color: #3b82f6;">CONVERT</span>
+                    </div>
+                    
+                    <!-- Source Image Upload -->
+                    <div class="form-group">
+                        <label class="label">Source Image</label>
+                        <div id="convert-dropzone" class="dropzone" onclick="selectConvertFile()" data-testid="convert-dropzone">
+                            <div class="dropzone-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
+                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                </svg>
+                            </div>
+                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Drop image here or click to browse</p>
+                            <p style="color: var(--muted-foreground); font-size: 0.875rem;">PNG, JPEG, WebP, GIF up to 10MB</p>
+                        </div>
+                        <div id="convert-file-preview" class="file-preview hidden">
+                            <div class="file-info">
+                                <img id="convert-thumbnail" class="file-thumbnail" alt="Preview">
+                                <div>
+                                    <p id="convert-filename" style="font-size: 0.875rem; font-weight: 500;"></p>
+                                    <p id="convert-filesize" style="font-size: 0.75rem; color: var(--muted-foreground);"></p>
+                                    <p id="convert-format" style="font-size: 0.75rem; color: var(--muted-foreground);"></p>
+                                </div>
+                            </div>
+                            <button onclick="removeConvertFile()" class="button-ghost" data-testid="button-remove-convert-file">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m18 6-12 12"/>
+                                    <path d="m6 6 12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Conversion Options -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <!-- Output Format -->
+                        <div class="form-group">
+                            <label for="output-format" class="label">Output Format</label>
+                            <select id="output-format" class="input" onchange="updateQualityControls()" data-testid="select-output-format">
+                                <option value="png">PNG (Lossless)</option>
+                                <option value="jpeg">JPEG (Lossy)</option>
+                                <option value="webp">WebP (Modern)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Quality Control -->
+                        <div class="form-group">
+                            <label for="image-quality" class="label">Quality <span id="quality-value">90%</span></label>
+                            <input 
+                                type="range" 
+                                id="image-quality" 
+                                min="10" 
+                                max="100" 
+                                value="90" 
+                                oninput="updateQualityValue()"
+                                style="width: 100%; margin-top: 0.5rem;"
+                                data-testid="slider-quality"
+                            >
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted-foreground); margin-top: 0.25rem;">
+                                <span>Lower Size</span>
+                                <span>Higher Quality</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Convert Button & Progress -->
+                    <div>
+                        <button onclick="convertImage()" id="convert-button" class="button" style="background-color: #3b82f6; color: white;" data-testid="button-convert">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+                                <circle cx="12" cy="13" r="3"/>
+                            </svg>
+                            Convert Image
+                        </button>
+                        
+                        <div id="convert-progress" class="progress-container hidden" data-testid="convert-progress">
+                            <div class="progress-header">
+                                <span>Converting...</span>
+                                <span id="convert-progress-text">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="convert-progress-fill" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        
+                        <div id="convert-result" class="result-box hidden" data-testid="convert-result">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div>
+                                    <p style="color: var(--primary); font-weight: 500;">Image Converted Successfully!</p>
+                                    <p id="convert-details" style="font-size: 0.875rem; color: var(--muted-foreground); margin-top: 0.25rem;"></p>
+                                </div>
+                                <button onclick="downloadConvertedImage()" class="button button-primary" style="width: auto; padding: 0.5rem 1rem;" data-testid="button-download-converted">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7,10 12,15 17,10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- How It Works Section -->
     <section id="how-it-works" class="info-section">
