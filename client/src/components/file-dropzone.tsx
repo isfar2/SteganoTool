@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { X, Upload } from "lucide-react";
 
 interface FileDropzoneProps {
-  onFileSelect: (file: File) => void;
+  onFileSelect: (file: File | null) => void;
   accept: string;
   maxSize: number;
   icon: React.ReactNode;
@@ -63,11 +63,8 @@ export function FileDropzone({
   
   const handleRemove = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    // Create empty file to trigger reset
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-  }, []);
+    onFileSelect(null);
+  }, [onFileSelect]);
   
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';

@@ -33,12 +33,12 @@ export default function SteganographyPage() {
   
   const downloadRef = useRef<HTMLAnchorElement>(null);
   
-  const handleEncodeFileSelect = useCallback((file: File) => {
+  const handleEncodeFileSelect = useCallback((file: File | null) => {
     setEncodeFile(file);
     setEncodedImageUrl(null);
   }, []);
   
-  const handleDecodeFileSelect = useCallback((file: File) => {
+  const handleDecodeFileSelect = useCallback((file: File | null) => {
     setDecodeFile(file);
     setDecodedMessage("");
     setDecodeSuccess(null);
