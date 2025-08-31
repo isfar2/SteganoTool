@@ -1,6 +1,6 @@
 # SteganoTool
 
-**SteganoTool** is a lightweight, privacy-focused web application that lets you **hide secret text messages inside images** using LSB (Least Significant Bit) steganography. All operations happen **locally in your browser**—no data is ever uploaded or stored externally, which means it is client-sided. I made this project so I could practice and develop my skills in TypeScript.
+**SteganoTool** is a lightweight, privacy-focused web application that lets you **hide secret text messages inside images** using LSB (Least Significant Bit) steganography. All operations happen **locally in your browser**, no data is ever uploaded or stored externally, which means it is client-sided. I made this project so I could practice and develop my skills in TypeScript.
 
 **⚠️ Warning ⚠️**
 > Steganography doesnt have a universal standard. Unless the encoding and decoding tools use the exact same method, the decoder won’t find the message or will misinterpret it.
