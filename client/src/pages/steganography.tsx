@@ -14,7 +14,6 @@ import { Download, Upload, Lock, Unlock, Copy, FileImage, MessageSquare } from "
 export default function SteganographyPage() {
   const { toast } = useToast();
   
-  // Encode state
   const [encodeFile, setEncodeFile] = useState<File | null>(null);
   const [secretMessage, setSecretMessage] = useState("");
   const [encodePassword, setEncodePassword] = useState("");
@@ -23,7 +22,6 @@ export default function SteganographyPage() {
   const [encodeProgress, setEncodeProgress] = useState(0);
   const [encodedImageUrl, setEncodedImageUrl] = useState<string | null>(null);
   
-  // Decode state
   const [decodeFile, setDecodeFile] = useState<File | null>(null);
   const [decodePassword, setDecodePassword] = useState("");
   const [isDecoding, setIsDecoding] = useState(false);
@@ -218,7 +216,6 @@ export default function SteganographyPage() {
         </div>
       </header>
       
-      {/* Hero Section */}
       <section className="bg-background py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
@@ -233,11 +230,9 @@ export default function SteganographyPage() {
         </div>
       </section>
       
-      {/* Main Tool */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="grid lg:grid-cols-2 gap-8">
           
-          {/* Encode Panel */}
           <Card className="bg-card border-border">
             <CardContent className="p-6 sm:p-8">
               <div className="flex items-center justify-between mb-6">
@@ -245,7 +240,6 @@ export default function SteganographyPage() {
                 <span className="bg-primary/10 text-primary px-2 py-1 text-xs font-mono font-medium">HIDE</span>
               </div>
               
-              {/* Image Upload */}
               <div className="mb-6">
                 <Label className="text-sm font-medium text-card-foreground mb-2 block">Cover Image</Label>
                 <FileDropzone
@@ -260,7 +254,6 @@ export default function SteganographyPage() {
                 />
               </div>
               
-              {/* Message Input */}
               <div className="mb-6">
                 <Label htmlFor="secret-message" className="text-sm font-medium text-card-foreground mb-2 block">
                   Secret Message
@@ -283,8 +276,6 @@ export default function SteganographyPage() {
                   </span>
                 </div>
               </div>
-              
-              {/* Password Protection */}
               <div className="mb-6">
                 <Label className="text-sm font-medium text-card-foreground mb-3 block">Encoding Options</Label>
                 <div className="flex items-center space-x-2 mb-3">
@@ -310,7 +301,6 @@ export default function SteganographyPage() {
                 )}
               </div>
               
-              {/* Encode Button & Progress */}
               <div className="space-y-4">
                 <Button
                   onClick={handleEncode}
@@ -363,16 +353,12 @@ export default function SteganographyPage() {
               </div>
             </CardContent>
           </Card>
-          
-          {/* Decode Panel */}
           <Card className="bg-card border-border">
             <CardContent className="p-6 sm:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="font-sans font-semibold text-xl text-card-foreground">Decode Message</h3>
                 <span className="bg-accent/50 text-accent-foreground px-2 py-1 text-xs font-mono font-medium">EXTRACT</span>
               </div>
-              
-              {/* Image Upload */}
               <div className="mb-6">
                 <Label className="text-sm font-medium text-card-foreground mb-2 block">Steganographic Image</Label>
                 <FileDropzone
@@ -386,8 +372,7 @@ export default function SteganographyPage() {
                   data-testid="decode-dropzone"
                 />
               </div>
-              
-              {/* Password Input */}
+            
               <div className="mb-6">
                 <Label htmlFor="decode-password" className="text-sm font-medium text-card-foreground mb-2 block">
                   Password (if protected)
@@ -402,7 +387,6 @@ export default function SteganographyPage() {
                 />
               </div>
               
-              {/* Decode Button & Progress */}
               <div className="space-y-4 mb-6">
                 <Button
                   onClick={handleDecode}
@@ -433,8 +417,6 @@ export default function SteganographyPage() {
                   </div>
                 )}
               </div>
-              
-              {/* Decoded Message Display */}
               <div className="mb-4">
                 <Label className="text-sm font-medium text-card-foreground mb-2 block">Extracted Message</Label>
                 <div className="min-h-[120px] p-4 border border-border bg-muted/30">
@@ -467,8 +449,6 @@ export default function SteganographyPage() {
                   )}
                 </div>
               </div>
-              
-              {/* Decode Result */}
               {decodeSuccess !== null && (
                 <div className="fade-in" data-testid="decode-result">
                   {decodeSuccess ? (
@@ -488,8 +468,6 @@ export default function SteganographyPage() {
           </Card>
         </div>
       </main>
-      
-      {/* Info Section */}
       <section id="how-it-works" className="bg-muted py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -526,8 +504,6 @@ export default function SteganographyPage() {
           </div>
         </div>
       </section>
-      
-      {/* Technical Details */}
       <section className="bg-background py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="bg-card border-border">
@@ -571,8 +547,6 @@ export default function SteganographyPage() {
           </Card>
         </div>
       </section>
-      
-      {/* Footer */}
       <footer className="bg-secondary text-secondary-foreground py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
