@@ -101,7 +101,7 @@
   --spacing: 0.25rem;
   --tracking-normal: 0em;
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
